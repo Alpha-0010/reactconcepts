@@ -23,7 +23,7 @@ const element= (
 
 ReactDOM.render(
   <React.StrictMode>
-    <App authorized={true} />
+    <App authorized={true} login={"Alpha-0010"} />
   </React.StrictMode>,
   // React.createElement("h1",{style: {color: "blue"}},"Heyy Everyone!!"),// The first argument is the tag
   // // the second is the property of the tag and thrid argument is the message.

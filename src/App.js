@@ -1,3 +1,4 @@
+import React,{ useState,useEffect } from 'react';
 import './App.css';
 import restaurant from './restaurant.jpg';
 
@@ -64,14 +65,73 @@ function SecretComponent() {
 }
 
 function App(props) {
-  return (
-    <div className="App">
-      <Header name="Cindy"/>
-      <Main dishes={dishesObject}/>
-      <Footer/>
-      {props.authorized ? ( <SecretComponent/> ) : ( <RegularComponent/> )}   
-    </div>
-  );
+
+  /* Using useState:--> First element of useState is the inital state and second element which 
+  it return is the function which can be used to change the initial state. */
+
+  const [emotion,setEmotion] = useState("Happy");
+  const [secondary,setSecondary] = useState("Tired");
+
+  /* useEffect Hook:  By using this Hook, you tell React that your component needs to do something after 
+  render. */
+  useEffect( ()=>{
+    console.log(`It's ${emotion} around here`);
+  },[emotion]);
+
+  useEffect( ()=>{
+    console.log(`It's ${secondary} around here`);
+  },[secondary]);
+
+  /*
+  Fetching data from remote sources.
+  */
+  const [data,setData]=useState(null);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState(null);
+
+  useEffect( ()=>{
+    if(!props.login) return;
+    setLoading(true);
+    fetch(`https://api.github.com/users/${props.login}`)
+      .then((response) => response.json())
+      .then(setData)
+      .then(setLoading(false))
+      .catch(setError);
+  },[props.login]);
+
+  if(loading) return <h3>Loading...</h3>;
+  if(error) return <pre>{JSON.stringify(error,null,2)}</pre>;
+
+  if(!data) return null;
+
+  if(data){
+    return (<div>
+      <h3>{data.name}</h3>
+    </div>);
+  }else{
+    return (
+      <div className="App">
+        <Header name="Cindy"/>
+        <Main dishes={dishesObject}/>
+        <Footer/>
+        {props.authorized ? ( <SecretComponent/> ) : ( <RegularComponent/> )}
+        <h1> Current emotion is {emotion} and {secondary}.</h1>
+        <button onClick={ () => setEmotion("Happy") }>
+          Make Happy
+        </button>
+        <button onClick={() => setEmotion("Frustrated") }>
+          Make Frustrate
+        </button>
+        <button onClick={ () => setSecondary("Crabby") }>
+          Make Crabby
+        </button>
+        <button onClick={() => setEmotion("Enthusiastic")}>
+          Make Enthusiastic
+        </button>   
+      </div>
+    );
+  
+  }
 
   /* We cannot use if else inside return so we use conditional statement inside return instead */
 
